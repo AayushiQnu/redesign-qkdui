@@ -1,0 +1,338 @@
+{
+	"pages" : [
+		{
+			"login" : {
+				"functions" : [
+					{
+						"doauth": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"shownode" : {
+				"functions" : [
+					{
+						"getnode": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					},
+					{
+						"editnode": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"showqelm" : {
+				"functions" : [
+					{
+						"getqelm": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					},
+					{
+						"editqelm": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"configqelm" : {
+				"functions" : [
+					{
+						"aem_init": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					},
+					{
+						"sync_block_enable": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					},
+					{
+						"trng_logic0": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					},
+					{
+						"trng_logic1": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					},
+					{
+						"trng_positive_level": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					},
+					{
+						"bem_turn_on": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					},
+					{
+						"bem_sync": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					},
+					{
+						"set_dli_cntrl": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					},
+					{
+						"set_gate_shift": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"showlogs" : {
+				"functions" : [
+					{
+						"startnodelogs": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					},
+					{
+						"stopnodelogs": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					},
+					{
+						"startqelmlogs": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					},
+					{
+						"stopqelmlogs": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"credetialsn" : {
+				"functions" : [
+					{
+						"showpsk": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					},
+					{
+						"addnewpsk": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : false
+							},
+							{
+								"crypto_officer" : false
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"changepassword" : {
+				"functions" : [
+					{
+						"changeauth": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					}
+				]
+			}
+		},
+		{
+			"logout" : {
+				"functions" : [
+					{
+						"removeauth": [
+							{
+								"admin" : true
+							},
+							{
+								"user" : true
+							},
+							{
+								"crypto_officer" : true
+							}
+						]
+					}
+				]
+			}
+		}
+	]
+}

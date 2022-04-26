@@ -1,0 +1,1389 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="new-background-color">
+    <ion-title class="toolbar-title">
+      <ion-img style="height:50px;width:50px;margin:auto;margin-top:6px;display:inline-block;" src="/assets/image/logo.png"></ion-img>
+      <!--{{nodeobj.nodeid}} {{nodeobj.nodename}} {{finalqelmtype}}-->
+
+      <div style="display:inline-block;">
+        <h2 style="position:absolute;margin:-37px -37px -37px 10px;font-size:20px;">
+          {{nodeobj.nodeid}} : {{nodeobj.nodename}} : {{finalqelmtype}}
+        </h2>
+      </div>
+      <div style="float:right;text-align:end;">
+        <h2 style="margin-top:14px;margin-right:14px;font-size:14px;">
+          Boot Time: {{finalboottime}} <br/>
+          System Time: {{finallocaltime}} <br/>
+          Up Time: {{runtime}}
+        </h2>
+      </div>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+
+  <div class="split1 left">
+    <ion-card style="background-color:#FF5C39;box-shadow:none! important">
+      <ion-list lines="none" style="background-color:#FF5C39">
+
+
+        <ion-item id="click-system-status" class="item-spacing">
+          <ion-button  class="button-width" (click)="clickbutton(0)" id="system-status-id">
+            System Status
+          </ion-button>
+        </ion-item>
+
+
+        <ion-item class="item-spacing">
+          <ion-button class="button-width" (click)="clickbutton(15)" id="clicknodeinfo">
+            Network Config
+          </ion-button>
+        </ion-item>
+
+        <ion-item class="item-spacing" *ngIf="(this.roleheader == 'Admin') && (finalqelmtype == 'Alice')">
+          <ion-button class="button-width" (click)="clickbutton(3)" id="clickqelmconfig">
+            Config Q-Element
+          </ion-button>
+        </ion-item>
+
+        <ion-item class="item-spacing">
+          <ion-button class="button-width" (click)="clickbutton(4)" id="clickdiagnose">
+            Diagnose
+          </ion-button>
+        </ion-item>
+
+        <ion-item class="item-spacing">
+          <ion-button class="button-width" (click)="clickbutton(7)" id="clickdebug">
+            Debug
+          </ion-button>
+        </ion-item>
+ 
+
+        <ion-item class="item-spacing" *ngIf="(this.roleheader == 'Admin')  ">
+          <ion-button class="button-width" (click)="clickbutton(13)" id="clicktrustednodeconfig">
+            Trusted Node
+          </ion-button>
+        </ion-item> 
+
+
+        <ion-item class="item-spacing" *ngIf="(this.roleheader == 'Admin')  ">
+          <ion-button class="button-width" (click)="clickbutton(11)" id="trustednodeipconfig">
+            CARP
+          </ion-button>
+        </ion-item>
+
+
+      </ion-list>
+    </ion-card>
+
+    <ion-card style="background-color:#FF5C39;box-shadow:none! important;margin-top:30px;">
+      <ion-list lines="none" style="background-color:#FF5C39">
+        <ion-item class="item-spacing">
+          <ion-button class="button-width" (click)="clickbutton(8)" id="clickgetcredentials">
+            Pre-Shared Key
+          </ion-button>
+        </ion-item>
+
+        <ion-item class="item-spacing">
+          <ion-button class="button-width" (click)="clickbutton(9)" id="clickchangepass">
+            Change Password
+          </ion-button>
+        </ion-item>
+
+        <ion-item class="item-spacing" *ngIf="(this.roleheader == 'Admin') || (this.roleheader == 'SuperAdmin')">
+          <ion-button class="button-width" (click)="clickbutton(10)" id="clickresetpass">
+            Reset Password
+          </ion-button>
+        </ion-item>
+
+        <ion-item class="item-spacing" *ngIf="(this.roleheader == 'Admin') || (this.roleheader == 'SuperAdmin')">
+          <ion-button class="button-width" (click)="clickbutton(12)" id="uploadCertificate">
+            Upload Certificates
+          </ion-button>
+        </ion-item>
+
+        <ion-item class="item-spacing" style="margin-bottom:30px;">
+          <ion-button class="button-width" (click)="presentAlertConfirm()" id="clicklogout">
+            Logout
+          </ion-button>
+        </ion-item>
+      </ion-list>
+    </ion-card>
+  </div>
+
+  <div class="split2 right">
+    <div style="position:absolute;top:4%;left:5%;right:2%;bottom:-8%;">
+      <h2 style="color: transparent; font-size:0.1px;">{{versionnum}}</h2>
+
+      <div *ngIf="buttontoshow == 0">
+
+        <ion-grid>
+          <ion-row>
+            <ion-col>
+              <ion-grid style="width: 75%;">
+                <ion-row id="system-state-row">
+                  <ion-col size="5">
+                    <ion-label id="system-state-col">System State: </ion-label>
+                  </ion-col>
+                  <ion-col size="6">
+                    <ion-label id="var-system-state-col">{{systemstatus}}</ion-label>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row>
+                  <ion-col size="5" style="display:grid;align-items: center;">
+                    <ion-label id="no-of-self-keys-available">No. Of Self Keys Available: </ion-label>
+                  </ion-col>
+                  <ion-col size="1" style="display:grid;align-items: center;">
+                    <ion-label id="var-no-of-self-keys-available">{{numofselfkeysavailable}}</ion-label>
+                  </ion-col>
+                  <ion-col size="3" *ngIf="(this.roleheader === 'Admin') && (finalqelmtype == 'Alice')">
+                    <ion-button style="margin:0;height:25px;" (click)="flushselfkeys()" id="clickflushselfkeys">
+                      Flush Self Keys
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+      
+                <ion-row>
+                  <ion-col size="5" style="display:grid;align-items: center;">
+                    <ion-label id="no-of-quantum-keys-available">No. Of Quantum Keys Available: </ion-label>
+                  </ion-col>
+                  <ion-col size="1" style="display:grid;align-items: center;">
+                    <ion-label id="var-no-of-quantum-keys-available">{{numoframkeysavailable}}</ion-label>
+                  </ion-col>
+                  <ion-col size="3" *ngIf="(this.roleheader === 'Admin') && (finalqelmtype == 'Alice')">
+                    <ion-button style="margin:0;height:25px;" (click)="flushramkeys()" id="clickflushquantumkeys">
+                      Flush Quantum Keys
+                    </ion-button>
+                  </ion-col>
+                </ion-row>
+
+                <ion-row>
+                  <ion-col size="5" *ngIf=" (finalqelmtype == 'Alice')">
+                    <ion-label id="system-temperature">System Temperature: </ion-label>
+                  </ion-col>
+                  <ion-col size="5" *ngIf=" (finalqelmtype == 'Bob')">
+                    <ion-label id="system-temperature">SPD Temperature: </ion-label>
+                  </ion-col>
+                  <ion-col size="4">
+                    <ion-label id="var-system-temperature">{{systemtemp}}</ion-label> &#8451;
+                  </ion-col>
+                </ion-row>
+
+                <!-- showHoverCard -->
+                <div class="environmentalParametersDiv" (click)="showEnvironmentalParameters()">
+                  <u><span>View more Environmental Parameters</span></u>
+                  <div *ngIf="showHoverCard" id="environmentalParametersCard">
+                    <ul id="environmentalParametersList">
+                      <li style="width: 50%; float: left; list-style-position: inside;"><ion-label id="qber-display">QBER: </ion-label><ion-label id="var-qber-display">1</ion-label> %</li>
+                      <li style="width: 50%; float: left; list-style-position: inside;"><ion-label id="Tacho-1">Tacho 1: </ion-label><ion-label  id="var-Tacho-1">10 rpm</ion-label></li>
+                      <li style="width: 50%; float: left; list-style-position: inside;"><ion-label id="Tacho-2">Tacho 2: </ion-label><ion-label id="var-Tacho-2">20 rpm</ion-label></li>
+                      <li style="width: 50%; float: left; list-style-position: inside;"><ion-label id="Tacho-3">Tacho 3: </ion-label><ion-label id="var-Tacho-3">30 rpm</ion-label></li>
+                      <li style="width: 50%; float: left; list-style-position: inside;"><ion-label id="Tacho-4">Tacho 4: </ion-label><ion-label id="var-Tacho-4">40 rpm</ion-label></li>
+                    </ul>
+                  </div>
+                </div>
+
+              </ion-grid>
+            </ion-col>
+            <!-- Setup and Mode -->
+            <ion-col class="setup-and-mode-col">
+              <ion-grid>
+                <!-- Mode Selection -->
+                <ion-row>
+                  <ion-col size="3" style="display: flex; align-items: center;">
+                    <ion-label>Mode Selection</ion-label>
+                  </ion-col>
+                  <ion-col size="5" *ngIf="(finalqelmtype == 'Alice')">
+                    <button ion-button style="margin-bottom:10px; height: 25px;" item-right value="Save Button Val" (click)="savemodeselection(2)" id = "clickmodeselectionsave" title="Save Intermediate Data">
+                      <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="checkbox-outline"></ion-icon>
+                    </button>
+                  </ion-col>
+                  <ion-col  size="4">
+                    <button ion-button style="margin-bottom:10px; height: 25px;" item-right value="Save Button Val" (click)="savemodeselection(0)" id = "clickmodeselectionsave" title="Start Key generation">
+                      <ion-icon name="play-circle-outline" style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;"></ion-icon>
+                    </button>
+                  </ion-col>
+                </ion-row>
+                <!-- Back-up Key -->
+                <ion-row *ngIf="this.roleheader === 'Admin'">
+                  <ion-col size="3" style="display: flex; align-items: center;">
+                    <ion-label>Back-up Key</ion-label>
+                  </ion-col>
+                  <ion-col size="8">
+                    <form style="width: 100%;">
+                      <textarea style="width: 100%; height: 25px;" type="text" [(ngModel)]="backupkey" name="backupkey" id="backupkey"></textarea>
+                    </form>
+                  </ion-col>
+                  <ion-col size="1">
+                    <button ion-button style="height: 25px;" (click)="addbackupkey()" id="clickbackupkey" title="Add">
+                      <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="checkbox-outline"></ion-icon>
+                    </button>
+                  </ion-col>
+                </ion-row>
+                <!-- VOA1 -->
+                <ion-row *ngIf="this.roleheader === 'Admin' && (finalqelmtype == 'Alice')">
+                  <ion-col size="3" style="display: flex; align-items: center;">
+                    <ion-label>VOA1</ion-label>
+                  </ion-col>
+                  <ion-col size="8">
+                    <form style="width: 75%;">
+                      <ion-input [disabled]="systemstatus != 'SYSTEM_BOOT_UP'" [ngClass]="systemstatus != 'SYSTEM_BOOT_UP' ? 'voa-disabled' : 'voa-enabled'" style="border: 1px solid rgb(133, 133, 133); height: 25px;" type="text" [(ngModel)]="voaset" name="voaset" id="voaset"></ion-input>
+                    </form>
+                  </ion-col>
+                  <ion-col size="1">
+                    <button ion-button [disabled]="systemstatus != 'SYSTEM_BOOT_UP'" style="height: 25px;" (click)="editvoaset()" id="editvoaset" title="Set">
+                      <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="checkbox-outline"></ion-icon>
+                    </button>
+                  </ion-col>
+                </ion-row>
+                <!-- VOA2 -->
+                <ion-row *ngIf="this.roleheader === 'Admin' && (finalqelmtype == 'Alice')">
+                  <ion-col size="3" style="display: flex; align-items: center;">
+                    <ion-label>VOA2</ion-label>
+                  </ion-col>
+                  <ion-col size="8">
+                    <form style="width: 75%;">
+                      <ion-input [disabled]="systemstatus != 'SYSTEM_BOOT_UP'" [ngClass]="systemstatus != 'SYSTEM_BOOT_UP' ? 'voa-disabled' : 'voa-enabled'" style="border: 1px solid rgb(133, 133, 133); height: 25px; margin-bottom: 7px;" type="text" [(ngModel)]="voaset2" name="voaset2" id="voaset2"></ion-input>
+                    </form>
+                  </ion-col>
+                  <ion-col size="1">
+                    <button ion-button [disabled]="systemstatus != 'SYSTEM_BOOT_UP'" style="height: 25px; margin-bottom: 10px;" (click)="editvoaset2()" id="editvoaset2" title="Set">
+                      <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="checkbox-outline"></ion-icon>
+                    </button>
+                  </ion-col>
+                </ion-row>
+                <!-- PA compression percentage -->
+                <ion-row *ngIf="this.roleheader === 'Admin'">
+                  <ion-col size="3" style="display: flex; align-items: center;">
+                    <ion-label>PA compression percentage</ion-label>
+                  </ion-col>
+                  <ion-col size="8">
+                    <form style="width: 75%;">
+                      <ion-input style="border: 1px solid rgb(133, 133, 133); height: 25px;" type="text" [(ngModel)]="pacomp" name="pacomp" id="pacomp"></ion-input>
+                    </form>
+                  </ion-col>
+                  <ion-col size="1">
+                    <button ion-button style="height: 25px;" (click)="editpacomp()" id="editpacomp" title="Set">
+                      <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="checkbox-outline"></ion-icon>
+                    </button>
+                  </ion-col>
+                </ion-row>
+                <!-- Q-ber Threshold -->
+                <ion-row *ngIf="finalqelmtype == 'Bob'">
+                  <ion-col size="3" style="display: flex; align-items: center; margin-top: -20px;">
+                    <ion-label position="floating">Q-ber Threshold</ion-label>
+                  </ion-col>
+                  <ion-col size="9">
+                    <form style="width: 100%;">
+                      <ion-col size="10" style="float: left;">
+                        <ion-input style="height: 25px; border: 1px solid rgb(133, 133, 133); margin-left: -5px; max-width: 75%;" type="text" [(ngModel)]="qberthreshold" name="qberthreshold" id="qberthreshold"></ion-input>
+                      </ion-col>
+                      <ion-col size="2" *ngIf="saveval == 0">
+                        <button ion-button style="height: 25px;" [(ngModel)]="saveval" name="saveval" (click)="savesetupdata()" id="clickbobsetupsave" title="Save">
+                          <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="checkbox-outline"></ion-icon>
+                        </button>
+                      </ion-col>
+                      <ion-col size="2" *ngIf="saveval == 1">
+                        <button ion-button style="height: 25px;" [(ngModel)]="saveval" name="saveval" (click)="savesetupdata()" id ="clickbobsetupupdate" title="Update">
+                          <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="checkbox-outline"></ion-icon>
+                        </button>
+                      </ion-col>
+                    </form>
+                  </ion-col>
+                </ion-row>
+
+              </ion-grid>
+        
+
+            </ion-col>
+          </ion-row>
+          <!-- System Parameters -->  
+          <ion-card>
+            <ion-card-content style="padding-top: 0;">
+  
+              <div *ngIf="finalqelmtype == 'Bob'">
+                <ion-grid style="padding: 0;">
+                  <ion-row>
+                    <ion-col style="padding: 0;" *ngFor="let item of masterparametertypebob">
+                      <ion-item style="display:inline-block;min-width:200px;">
+                        <ion-label>
+                          {{item.name}}
+                        </ion-label>
+                        <ion-checkbox color="dark" [(ngModel)]="item.checked"  (ionChange)="graphparameterclicked($event, item)"></ion-checkbox>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size="1">
+                      <button ion-button class="graph-icon" style="float: left;" [disabled]="graphparameterstarted" (click)="startgraph()" id="clickrunforgraph" title="Run">
+                        <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="play-circle"></ion-icon>
+                      </button>
+                      <button ion-button class="graph-icon" (click)="stopgraph()" id="clickrunforgraph" title="Stop">
+                        <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="stop"></ion-icon>
+                      </button>
+                    </ion-col>
+                    <ion-col size="1">
+                      <button ion-button class="graph-icon" (click)="expandGraph()" title="View in Full Screen">
+                        <ion-icon class="expand-icon" name="expand-outline"></ion-icon>
+                      </button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </div>
+  
+              <div *ngIf="finalqelmtype == 'Alice'">
+                <ion-grid style="padding: 0;">
+                  <ion-row>
+                    <ion-col style="padding: 0;" *ngFor="let item of masterparametertypealice">
+                      <ion-item style="display:inline-block;min-width:200px;">
+                        <ion-label>
+                          {{item.name}}
+                        </ion-label>
+                        <ion-checkbox color="dark" [(ngModel)]="item.checked" (ionChange)="graphparameterclicked($event, item)"></ion-checkbox>
+                      </ion-item>
+                    </ion-col>
+                    <ion-col size="1">
+                      <button ion-button class="graph-icon" style="float: left;" [disabled]="graphparameterstarted" (click)="startgraph()" id="clickrunforgraph" title="Run">
+                        <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="play-circle"></ion-icon>
+                      </button>
+                      <button ion-button class="graph-icon" (click)="stopgraph()" id="clickrunforgraph" title="Stop">
+                        <ion-icon style="height: 25px; width: 25px; margin-top: -5px; pointer-events: none;" name="stop"></ion-icon>
+                      </button>
+                    </ion-col>
+                    <ion-col size="1">
+                      <button ion-button id="expandGraphId" class="graph-icon" (click)="expandGraph()" title="View in Full Screen">
+                        <ion-icon class="expand-icon" name="expand-outline"></ion-icon>
+                      </button>
+                    </ion-col>
+                  </ion-row>
+                </ion-grid>
+              </div>
+  
+              
+            </ion-card-content>
+          </ion-card>
+          <div id="canvasLineChartDiv" [ngClass]="expandGraphEnable ? 'chart-container-expand' : 'chart-container'">
+            <canvas id="canvasLineChart" #lineCanvas [ngClass]="expandGraphEnable ? 'expand-graph-enable' : 'expand-graph-disable'"></canvas>
+          </div>
+        </ion-grid>
+
+      </div>
+
+      <div *ngIf="(buttontoshow == 3) && (finalqelmtype == 'Alice')">
+        <ion-card>
+          <ion-card-header (click)="expandconfigalice(1)" id="clickaeminitializationoffexpand">
+            <ion-card-title>AEM Initialization Off</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <app-expandable expandHeight="800px" [expanded]="configalice[1]">
+              <ion-button class="button-width-new2" (click)="aeminitoff()" id="clickaeminitializationoffset" [disabled]="aemoffstarted">
+                Set
+              </ion-button>
+
+              <div *ngIf="aemoffstarted == 1">
+                <ion-progress-bar type="indeterminate"></ion-progress-bar>
+              </div>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+
+        </ion-card> 
+
+      </div>
+
+
+      <div *ngIf="(buttontoshow == 3) && (finalqelmtype == 'Bob')">
+        <ion-card>
+          <ion-card-header (click)="expandconfigalice(0)" id="clickbemturnon">
+            <ion-card-title>BEM Turn On</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <app-expandable expandHeight="800px" [expanded]="configalice[0]">
+              <ion-button class="button-width-new2" (click)="bemturnon()" id="clickbemturnonset" [disabled]="bemonstarted">
+                Set
+              </ion-button>
+
+              <div *ngIf="bemonstarted == 1">
+                <ion-progress-bar type="indeterminate"></ion-progress-bar>
+              </div>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header (click)="expandconfigalice(1)">
+            <ion-card-title>BEM Turn Off</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <app-expandable expandHeight="800px" [expanded]="configalice[1]">
+              <ion-button class="button-width-new2" (click)="bemturnoff()" [disabled]="bemoffstarted">
+                Set
+              </ion-button>
+              
+              <div *ngIf="bemoffstarted == 1">
+                <ion-progress-bar type="indeterminate"></ion-progress-bar>
+              </div>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card>
+
+      </div>
+
+
+      <div *ngIf="buttontoshow == 4">
+        <ion-card>
+          <ion-card-header (click)="expanddiagnose(0)" id="expandinternalcom">
+            <ion-card-title>Check Internal Communication</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <app-expandable expandHeight="800px" [expanded]="diagnose[0]">
+              <ion-button class="button-width-new2" (click)="diagnosefunc1()" id="clickcheckinternalcom" [disabled]="internalcheckon">
+                Start
+              </ion-button>
+
+              <div *ngIf="internalcheckon == 1">
+                <ion-progress-bar type="indeterminate"></ion-progress-bar>
+              </div>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header (click)="expanddiagnose(1)" id="expandexternalcom">
+            <ion-card-title>Check Classical Channel communication</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <app-expandable expandHeight="800px" [expanded]="diagnose[1]">
+              <ion-button class="button-width-new2" (click)="diagnosefunc2()" id="clickcheckexternalcom" [disabled]="externalcheckon">
+                Start
+              </ion-button>
+
+              <div *ngIf="externalcheckon == 1">
+                <ion-progress-bar type="indeterminate"></ion-progress-bar>
+              </div>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card *ngIf="finalqelmtype == 'Bob'">
+          <ion-card-header (click)="expanddiagnose(2)" id="syncchannelcheckon">
+            <ion-card-title>Check Sync channel</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <app-expandable expandHeight="800px" [expanded]="diagnose[2]">
+              <ion-button class="button-width-new2" (click)="diagnosefunc3()" id="clickchecksyncchannel" [disabled]="syncchannelcheckon">
+                Start
+              </ion-button>
+
+              <div *ngIf="syncchannelcheckon == 1">
+                <ion-progress-bar type="indeterminate"></ion-progress-bar>
+              </div>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card>
+
+        <ion-card>
+          <ion-card-header (click)="expanddiagnose(3)" id="expandexternalcom">
+            <ion-card-title>Check Path connectivity</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <app-expandable expandHeight="800px" [expanded]="diagnose[3]">
+              <h2>Enter Destination Node ID</h2>
+              <form>
+                <ion-input style="border-bottom: 1px solid #eaeaea" type="text" [(ngModel)]="nodeid" name="nodeid" id="nodeid"></ion-input>
+              </form>
+              <ion-button class="button-width-new2" (click)="diagnosefunc4()" id="clickcheckexternalconnect" [disabled]="externalcheckconnect">
+                Start
+              </ion-button>
+              <ion-button class="button-width-new2" (click)="diagnosefunc5()" id="clickcheckexternalconnectall" [disabled]="externalcheckconnect">
+                Check all paths
+              </ion-button>
+              <div *ngIf="externalcheckconnect == 1">
+                <ion-progress-bar type="indeterminate"></ion-progress-bar>
+              </div>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card>
+
+      </div>
+
+     <div *ngIf="buttontoshow == 7">
+        <ion-segment color="primary" [(ngModel)]="logtab" (ionChange)="segmentChanged($event)">
+          <ion-segment-button value="nodelog" checked style="min-width:50%! important;align-items: center;">
+            <ion-label>Node Logs</ion-label>
+          </ion-segment-button>
+          <ion-segment-button value="qelmlog" checked style="min-width:50%! important;align-items: center;">
+            <ion-label>Q-Element Logs</ion-label>
+          </ion-segment-button>
+        </ion-segment>
+
+        <div [ngSwitch]="logtab">
+          <div *ngSwitchCase="'nodelog'">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title style="display:inline-block">Node Logs</ion-card-title>
+
+                <ion-card-title style="display:inline-block; float:right;">
+                    <button style="margin-right:20px;display:inline-block;color:green;background-color:transparent;font-size:26px;" (click)="startnodelog()" id="clickstartnodelogs" [disabled]="nodelogstarted">
+                      Start
+                    </button>
+                    <button style="margin-right:20px;display:inline-block;color:red;background-color:transparent;font-size:26px;" (click)="stopnodelog()" id="clickstopnodelogs">
+                      Stop
+                    </button>
+                    <button style="display:inline-block;color:orange;background-color:transparent;font-size:20px;" (click)="savenodelog()" id="clicksavenodelogs">
+                      <ion-icon name="save-outline"></ion-icon>
+                    </button>
+
+                </ion-card-title>
+              </ion-card-header>
+              <ion-card-content style="padding:0">
+                <div #content1 style="height:calc(100vh - 260px);overflow: scroll;padding-left:16px;">
+                  <ion-searchbar style="margin-top: 20px;" placeholder="Filter records" (ionInput)="filterItems($event)"></ion-searchbar>
+                  <ion-list>
+                    <ion-item *ngFor="let logs of filteredNodelogarray">
+                      {{ logs }}
+                    </ion-item>
+                  </ion-list>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </div>
+
+          <div *ngSwitchCase="'qelmlog'">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title style="display:inline-block">Q-Element Logs</ion-card-title>
+
+                <ion-card-title style="display:inline-block; float:right;">
+                    <button style="margin-right:20px;display:inline-block;color:green;background-color:transparent;font-size:26px;" (click)="startqelmlog()" id="clickstartqelmlogs" [disabled]="qelmlogstarted">
+                      Start
+                    </button>
+                    <button style="margin-right:20px;display:inline-block;color:red;background-color:transparent;font-size:26px;" (click)="stopqelmlog()" id="clickstopqelmlogs">
+                      Stop
+                    </button>
+                    <button style="display:inline-block;color:orange;background-color:transparent;font-size:20px;" (click)="saveqelmlog()" id="clicksaveqelmlogs">
+                      <ion-icon name="save-outline"></ion-icon>
+                    </button>
+
+                </ion-card-title>            
+              </ion-card-header>
+
+              <ion-card-content style="padding:0">
+                <div #content2 style="height:calc(100vh - 260px);overflow: scroll;padding-left:16px;">
+                  <ion-searchbar style="margin-top: 20px;" placeholder="Filter records" (ionInput)="filterItems($event)"></ion-searchbar>
+                  <ion-list>
+                    <ion-item *ngFor="let logs of filteredqelmlogarray">
+                      {{ logs }}
+                    </ion-item>
+                  </ion-list>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </div>
+        </div>
+      </div>
+
+
+      <div *ngIf="(buttontoshow == 11) && (finalqelmtype == 'Bob')">
+        <div style="border-bottom: 1px solid #eaeaea;padding-bottom:10px;margin-bottom:10px;font-weight:bold;">
+          <h2 style="font-size: 30px;">
+            CARP
+          </h2>
+        </div>
+
+
+        <div style="border-top: 1px solid #eaeaea;padding-bottom:10px;margin-bottom:10px;font-weight:bold;">
+          <h2 style="font-size: 30px;">
+            Setup
+          </h2>
+        </div>
+
+        <form >
+          <ion-grid>
+
+            <ion-row *ngIf="this.roleheader === 'Admin'">
+              <ion-col size="3">
+                  
+              </ion-col>
+              <ion-col size="3" style="text-align:right;display:grid;align-items:center !important;">
+                <ion-label>CAP Server IP address : </ion-label>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-input style="border:1px solid #eaeaea" [(ngModel)]="elasticserverip" name="elasticserverip"></ion-input>
+              </ion-col>
+            </ion-row>
+
+            <ion-row *ngIf="this.roleheader === 'Admin'">
+              <ion-col size="3">
+                  
+              </ion-col>
+              <ion-col size="3" style="text-align:right;display:grid;align-items:center !important;">
+                <ion-label>Node hostname : </ion-label>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-input style="border:1px solid #eaeaea" [(ngModel)]="nodehostname" name="nodehostname"></ion-input>
+              </ion-col>
+            </ion-row>
+
+            <ion-row >
+              <ion-col>
+                <ion-button *ngIf="this.roleheader === 'Admin'" style="margin-bottom:10px;" class="button-width-new2" (click)="editcarpinfo(elasticserverip, nodehostname)">
+                Save
+                </ion-button>
+              </ion-col>
+            </ion-row>
+
+          </ion-grid>
+
+        </form>
+
+        <div style="border-top: 1px solid #eaeaea;padding-bottom:10px;margin-bottom:30px;font-weight:bold;">
+        </div>
+
+      </div>
+
+
+
+
+      <div *ngIf="buttontoshow == 8">
+        <ion-card>
+          <ion-card-header>
+            <ion-card-title>Pre-Shared Key</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+
+            <div style="font-size:16px;font-weight:normal;max-height:200px;" id="Number-of-self-keys-available">
+              Number of Self Keys available
+            </div>
+
+            <div style="font-size:16px;font-weight:bold;max-height:200px;" id="var-Number-of-self-keys-available">
+              {{numofselfkeysavailable}}
+            </div>
+          </ion-card-content>
+        </ion-card>
+        <ion-card *ngIf="this.roleheader === 'Admin'">
+          <ion-card-header (click)="expandpskadd(pskexpanded)" id="expandenternewpsk">
+            <ion-card-title>Enter New Pre-Shared Key</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <app-expandable expandHeight="800px" [expanded]="pskexpanded">
+              <form>
+                <ion-input style="border-bottom: 1px solid #eaeaea" type="text" [(ngModel)]="newpsk" name="newpsk" id="newpsk"></ion-input>
+              </form>
+              <ion-button class="button-width-new2" style="margin-bottom:20px;" (click)="addpsk()" id="clickaddpsk">
+                Add
+              </ion-button>
+            </app-expandable>
+          </ion-card-content>
+        </ion-card> 
+
+        <!--Added new code here-->
+         <!-- Added hard coded key here-->
+        <!-- <div *ngIf="buttontoshow == 12"> -->
+          <ion-card *ngIf="this.roleheader === 'Admin'">
+            <ion-card-header (click)="expandpskbulk(pskexpandedbulk)" id="expandenterbulkpsk">
+              <ion-card-title>Enter bulk Pre-Shared Key</ion-card-title>
+            </ion-card-header>
+            <app-expandable expandHeight="800px" [expanded]="pskexpandedbulk">
+            <div class="file-input-container">
+              <!--<label style="background-color:#FF5C39;box-shadow:none!  important;margin-top:30px;font-weight:normal;max-height:200px;left: 100px;"> -->
+              
+                <label style = "position:relative; left:-950px; top:2px;background-color:darkgray;">
+                <input  type="file" shape="round" ng2FileSelect [uploader]="pskuploader" id="presharedkeyaddfiles" multiple  />
+                Add Files
+              </label >
+              <ion-button style = "position:relative; left:-900px; top:2px;background-color: lightcyan;" class="button-width-generate" shape="round" (click)="bulkuploadpsk()" id="bulkuploadpsk"> 
+               
+             <!-- <ion-button class="button-width-generate" shape="round" (click)="bulkuploadpsk()" id="bulkuploadpsk"> -->
+                 Upload
+              </ion-button>
+            </div>
+            
+            <h2 id="var-psk-uploader">Files: {{ pskuploader?.queue?.length }}</h2>
+            
+            <ion-list>
+              <ion-reorder-group (ionItemReorder)="reorderFiles($event)" disabled="false">
+                <ion-item *ngFor="let item of pskuploader.queue">
+                  <ion-label id="var-psk-file">
+                    {{ item?.file?.name }}
+                  </ion-label>
+                  <ion-reorder></ion-reorder>
+                </ion-item>
+              </ion-reorder-group>
+            </ion-list>
+          </app-expandable>
+          </ion-card>
+          <!---->
+        <!---Till here-->
+      </div>
+
+      <div *ngIf="buttontoshow == 9">
+        <div style="border-bottom: 1px solid #eaeaea;padding-bottom:10px;margin-bottom:30px;font-weight:bold;">
+          <h2 style="font-size: 30px;">
+            Change Password
+          </h2>
+        </div>
+        <form >
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>Old Password</ion-label>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-input style="border:1px solid #eaeaea" placeholder="Old Password" type="password" [(ngModel)]="oldpassword" name="oldpassword" id="saveoldpassword"></ion-input>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>New Password</ion-label>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-input style="border:1px solid #eaeaea" placeholder="New Password" type="password" [(ngModel)]="newpassword" name="newpassword" id="savenewpassword"></ion-input>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>Confirm New Password</ion-label>
+              </ion-col>
+              <ion-col size="auto"> 
+                <ion-input style="border:1px solid #eaeaea" placeholder="Confirm Password" type="password" [(ngModel)]="confirmpassword" name="confirmpassword" id="saveconfirmpassword"></ion-input>
+              </ion-col>
+            </ion-row>
+
+          </ion-grid>
+        </form>
+        <ion-button class="button-width-new2" (click)="setnewpassword(oldpassword, newpassword, confirmpassword)" id="clickchangepassword">
+          Save
+        </ion-button>
+      </div>
+
+      <div *ngIf="(buttontoshow == 10) && ((this.roleheader === 'Admin') || (this.roleheader === 'SuperAdmin'))">
+        <div style="border-bottom: 1px solid #eaeaea;padding-bottom:10px;margin-bottom:30px;font-weight:bold;">
+          <h2 style="font-size: 30px;">
+            Reset Password
+          </h2>
+        </div>
+        <form >
+          <ion-grid>
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>UserId</ion-label>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-input style="border:1px solid #eaeaea" placeholder="userid" type="text" [(ngModel)]="useridtochange" name="useridtochange" id="resetuseridpassword"></ion-input>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>New Password</ion-label>
+              </ion-col>
+              <ion-col size="auto">
+                <ion-input style="border:1px solid #eaeaea" placeholder="New Password" type="password" [(ngModel)]="newpassword" name="newpassword" id="resetnewpassword"></ion-input>
+              </ion-col>
+            </ion-row>
+
+            <ion-row>
+              <ion-col size="6">
+                <ion-label>Confirm New Password</ion-label>
+              </ion-col>
+              <ion-col size="auto"> 
+                <ion-input style="border:1px solid #eaeaea" placeholder="Confirm Password" type="password" [(ngModel)]="confirmpassword" name="confirmpassword" id="resetconfirmpassword"></ion-input>
+              </ion-col>
+            </ion-row>
+
+          </ion-grid>
+        </form>
+        <ion-button class="button-width-new2" (click)="setnewpasswordforuser(useridtochange, newpassword, confirmpassword)" id="clickresetpassword">
+          Save
+        </ion-button>
+      </div>
+
+        <!-- Added hard coded key here-->
+        <div *ngIf="buttontoshow == 12">
+          <ion-card *ngIf="this.roleheader === 'Admin'">
+
+          
+            <div ng2FileDrop [ngClass]="{'nv-file-over': hasBaseDropZoneOver}" (fileOver)="fileOverBase($event)" [uploader]="backupkeyuploader" class="drop-zone">
+              Drop files here...
+            </div>
+            
+            <div class="file-input-container">
+              <label style = "position:relative; left:-950px; top:2px;background-color:darkgray;">
+                <input type="file" ng2FileSelect [uploader]="backupkeyuploader" multiple id="var-add-backup-file"/>
+                Add Files
+              </label>
+              <ion-button style = "position:relative; left:-900px; top:2px;background-color: lightcyan;" class="button-width-generate" shape="round" (click)="uploadcertificate()" id="uploadcertificate">
+             <!-- <ion-button class="button-width-generate" shape="round" (click)="uploadcertificate()" id="uploadcertificate"> -->
+                Upload
+              </ion-button>
+            </div>
+            
+            <h2 id="var-backup-uploader">Files: {{ backupkeyuploader?.queue?.length }}</h2>
+            
+            <ion-list>
+              <ion-reorder-group (ionItemReorder)="reorderFiles($event)" disabled="false">
+                <ion-item *ngFor="let item of backupkeyuploader.queue">
+                  <ion-label id="var-backup-file">
+                    {{ item?.file?.name }}
+                  </ion-label>
+                  <ion-reorder></ion-reorder>
+                </ion-item>
+              </ion-reorder-group>
+            </ion-list>
+          </ion-card>
+          </div>
+    <!---->
+    <div *ngIf="buttontoshow == 13 || buttontoshow == 14 || buttontoshow == 19 || buttontoshow == 21 || buttontoshow == 20" style="text-align: center; margin-left: 25px; margin-top: -25px;">
+
+      <div class="upload-file-div">
+        <h4 style="float: left;" id="var-backup-uploader">T-Node Path Files: {{ backupkeyuploader?.queue?.length }}</h4>
+        <div style="float: left; margin-left: 25px; align-items: center; display: flex;" *ngIf="this.roleheader === 'Admin'">
+          <div class="file-input-container">
+            <label style = "position:relative; top:6px;background-color:darkgray;">
+              <input type="file" ng2FileSelect [uploader]="backupkeyuploader" multiple id="var-add-backup-file"/>
+              Add Files
+            </label>
+            <ion-button style = "position:relative; background-color: lightcyan;" class="button-width-generate" shape="round" (click)="uploadpathconfiguration()" id="uploadpathconfiguration">
+              Upload
+            </ion-button>
+          </div>
+          <ion-list>
+            <ion-reorder-group (ionItemReorder)="reorderFiles($event)" disabled="false">
+              <ion-item *ngFor="let item of backupkeyuploader.queue">
+                <ion-label id="var-backup-file">
+                  {{ item?.file?.name }}
+                </ion-label>
+                <ion-reorder></ion-reorder>
+              </ion-item>
+            </ion-reorder-group>
+          </ion-list>
+        </div>
+      </div>
+      <div class="upload-file-div">
+        <h4 style="float: left;" id="var-backup-uploader">T-Node IP Files: {{ backupkeyuploader?.queue?.length }}</h4>
+        <div style="float: left; margin-left: 25px; align-items: center; display: flex;" *ngIf="this.roleheader === 'Admin'">      
+          <div class="file-input-container">
+            <label style = "position:relative; top:6px;background-color:darkgray;">
+              <input type="file" ng2FileSelect [uploader]="backupkeyuploader" multiple id="var-add-backup-file"/>
+              Add Files
+            </label>
+            <ion-button style = "position:relative; background-color: lightcyan;" class="button-width-generate" shape="round" (click)="uploadipconfiguration()" id="uploadipconfiguration">
+              Upload
+            </ion-button>
+          </div>
+          <ion-list>
+            <ion-reorder-group (ionItemReorder)="reorderFiles($event)" disabled="false">
+              <ion-item *ngFor="let item of backupkeyuploader.queue">
+                <ion-label id="var-backup-file">
+                  {{ item?.file?.name }}
+                </ion-label>
+                <ion-reorder></ion-reorder>
+              </ion-item>
+            </ion-reorder-group>
+          </ion-list>
+        </div>
+      </div>
+
+      <ion-grid style="width: 50%; margin: auto;">
+        <ion-col size="7">
+          <div style="margin-top: -25px;">
+            <div style="border-bottom: 1px solid #eaeaea;padding-bottom:10px;margin-bottom:10px;font-weight:bold;">
+              <h2 style="font-size: 30px; margin-top: 50px;">
+                Current Node ID: {{qelmobj1.qelmid}}
+              </h2>
+              <ion-spinner class="loading" *ngIf="loading" name="lines-small">Loading</ion-spinner>
+              <span class="loadingText" *ngIf="loading">Loading</span>
+            </div>
+            <ion-spinner class="loadKeysPerNode" *ngIf="loadingKeysPerNode" name="lines-small">Loading</ion-spinner>
+            <span class="loadKeysPerNodeText" *ngIf="loadingKeysPerNode">Loading Keys per Node</span>
+            <table *ngIf="hasResponse">
+              <tr>
+                <th></th>
+                <th>Node</th>
+                <th>Keys</th>
+              </tr>
+              <tr *ngFor="let keyCountObj of jsonKeyCountObj">
+                <td><ion-checkbox color="dark" [(ngModel)]="keyCountObj.checked"></ion-checkbox></td>
+                <td>{{keyCountObj.node_id}}</td>
+                <td>{{keyCountObj.keys}}</td>
+                <td (click)="startkeymigration()"><ion-icon class="hover-icon" name="play-circle-outline"></ion-icon></td>
+                <td (click)="stopkeymigration()"><ion-icon class="hover-icon" name="stop-circle-outline"></ion-icon></td>
+                <td (click)="flushramkeys_tnode()"><ion-icon class="hover-icon" name="trash"></ion-icon></td>
+              </tr>
+            </table>
+
+            <ion-row style="display: block; margin-top: 25px;">
+              <ion-col size="3" *ngIf="(this.roleheader === 'Admin')">
+                <ion-button style="margin:0;height:25px;" (click)="flushramkeys_tnode()" id="clickflushquantumkeys">
+                  Flush All
+                </ion-button>
+              </ion-col>
+              <ion-col size="3" *ngIf="(this.roleheader === 'Admin')">
+                <ion-button style="margin:0;height:25px;" (click)="startkeymigration()" id="clickflushquantumkeys">
+                  Start All
+                </ion-button>
+              </ion-col>
+              <ion-col size="3" *ngIf="(this.roleheader === 'Admin')">
+                <ion-button style="margin:0;height:25px;" (click)="stopkeymigration()" id="clickflushquantumkeys">
+                  Stop All
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-spinner class="loadFlushKeysPerNodeData" *ngIf="loadingFlushKeysPerNodeData" name="lines-small">Loading</ion-spinner>
+              <span class="loadFlushKeysPerNodeDataText" *ngIf="loadingFlushKeysPerNodeData">Flushing Keys</span>
+            </ion-row>
+          </div>
+          <!-- <div style="width: 50%; margin: auto; text-align: center;"> -->
+            <!-- <div style="border-bottom: 1px solid #eaeaea;padding-bottom:10px;margin-bottom:10px;font-weight:bold;">
+              <ion-spinner class="loading" *ngIf="loading" name="lines-small">Loading</ion-spinner>
+              <span class="loadingText" *ngIf="loading">Loading</span>
+            </div> -->
+            <!-- <ion-item (click)="openSelector(selector)">
+              <ion-label>Available Nodes</ion-label>
+              <ion-spinner class="loadFlushKeysPerNode" *ngIf="loadingFlushKeysPerNode" name="lines-small">Loading</ion-spinner>
+              <span class="loadFlushKeysPerNodeText" *ngIf="loadingFlushKeysPerNode">Loading Available Nodes</span>
+              <ion-select #selector style="pointer-events: none" [interfaceOptions]="customAlertOptions" multiple="true" [value]="flushNodeBasket" (ionChange)="flushKeyNodeChange($event)">
+                <ion-select-option *ngFor="let sdnlOption of sourceOrDestNodeList" [value]="sdnlOption">{{sdnlOption}}</ion-select-option>
+              </ion-select>
+            </ion-item> -->
+            <!-- <ion-row style="display: block; margin-top: 25px;">
+              <ion-col size="3"></ion-col>
+              <ion-col size="3" *ngIf="(this.roleheader === 'Admin')">
+                <ion-button style="margin:0;height:25px;" (click)="flushramkeys_tnode()" id="clickflushquantumkeys">
+                  Flush Quantum Keys
+                </ion-button>
+              </ion-col>
+            </ion-row>
+            <ion-row>
+              <ion-spinner class="loadFlushKeysPerNodeData" *ngIf="loadingFlushKeysPerNodeData" name="lines-small">Loading</ion-spinner>
+              <span class="loadFlushKeysPerNodeDataText" *ngIf="loadingFlushKeysPerNodeData">Flushing Keys</span>
+            </ion-row> -->
+          <!-- </div> -->
+        </ion-col>
+      </ion-grid>    
+      
+    </div>        
+    
+        <div *ngIf="buttontoshow == 15" style="margin-left: 50px;">
+
+          <div style="border-top: 1px solid #eaeaea;padding-bottom:3px;margin-bottom:3px;font-weight:bold;">
+            <h2 style="font-size: 20px;">
+              Interface Configuration
+            </h2>
+          <ion-row>
+            
+            <ion-col>
+            <ion-list size="3" class="ion-float-left">
+              <ion-radio-group allow-empty-selection="true" name="radio-group" (ionChange)="setprocessorselection($event)" #radioGroup>
+                <ion-list-header>
+                  <ion-label style="font-size: 15px;">Element</ion-label>
+                </ion-list-header>
+              <ion-row>
+                <ion-item *ngFor="let item of radio_list" (ionFocus)="radioFocus()"
+                  (ionBlur)="radioBlur()">
+                  <ion-label>{{item.text}}</ion-label>
+                  <ion-radio slot="start" name="{{item.name}}" value="{{item.value}}"
+                    color="{{item.color}}" disabled="{{item.disabled}}"></ion-radio>
+                </ion-item>
+              </ion-row>
+          
+              </ion-radio-group>
+            </ion-list>
+            </ion-col>
+
+        </ion-row>
+          <form *ngIf = "this.processortoshow==0">
+            <ion-grid>
+              <ion-col>
+              <ion-row >
+                <ion-col size="2">
+                  <ion-item>
+                    <ion-label>Static Configuration</ion-label>
+                    <ion-toggle name="isDHCP" [(ngModel)]="staticipsettingenable"  (ionChange)="setstaticselection($event)"></ion-toggle>
+                  </ion-item>
+                </ion-col>
+
+              </ion-row>
+            </ion-col>
+            <ion-col>
+              <ion-row>
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Node Interface Device Name: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 1) && (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea" id="var-Node-interface-device-name" [(ngModel)]="nodeobjnetwork.nodeclidevicename" name="nodeclidevicename"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 0) || (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"  id="var-Node-interface-device-name">{{nodeobjnetwork.nodeclidevicename}}</ion-label>
+                </ion-col>
+              </ion-row>
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+
+
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Node Interface IP address: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 1) && (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"  id="var-Node-interface-device-name"  [(ngModel)]="nodeobjnetwork.nodeclideviceIP"     name="nodeclideviceIP"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 0) || (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"  id="var-Node-interface-device-name">{{nodeobjnetwork.nodeclideviceIP}}</ion-label>
+                </ion-col>
+              </ion-row>
+
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Node Interface subnet mask: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 1) && (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"   id="var-Node-interface-device-name" [(ngModel)]="nodeobjnetwork.nodeclidevicesubnetmask" name="nodeclidevicesubnetmask"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 0) || (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"   id="var-Node-interface-device-name">{{nodeobjnetwork.nodeclidevicesubnetmask}}</ion-label>
+                </ion-col>
+              </ion-row>
+
+
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Node Interface gateway address: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 1) && (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"   id="var-Node-interface-device-name" [(ngModel)]="nodeobjnetwork.nodeclidevicegatewayaddress" name="nodeclidevicegatewayaddress"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 0) || (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"   id="var-Node-interface-device-name">{{nodeobjnetwork.nodeclidevicegatewayaddress}}</ion-label>
+                </ion-col>
+              </ion-row>
+            </ion-col>
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col>
+                  <ion-button *ngIf="(this.roleheader === 'Admin') && (this.staticipsettingenable === 1)" style="margin-bottom:10px;" class="button-width-new2" (click)="editnetworkinfo(0, this.processortoshow,nodeobjnetwork.nodeclidevicegatewayaddress, nodeobjnetwork.nodeclidevicesubnetmask, nodeobjnetwork.nodeclideviceIP,  nodeobjnetwork.nodeclidevicename)" id="clickipv4addresssave">
+                  Save
+                  </ion-button>
+                </ion-col>
+                <ion-col>
+                  <ion-button *ngIf="this.roleheader === 'Admin'" style="margin-bottom:10px;" (click)="editdynamicnetworkinfo(1, this.processortoshow)" id="clickipv4addresssave">
+                  Set Dynamic Configuration
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+  
+            </ion-grid>
+  
+          </form>
+
+          <form *ngIf = "this.processortoshow==1">
+            <ion-grid>
+              <ion-row>
+                <ion-item>
+                  <ion-label>Static Configuration</ion-label>
+                  <ion-toggle name="isDHCP" [(ngModel)]="staticipsettingenable" (ionChange)="setstaticselection($event)"></ion-toggle>
+                </ion-item>
+              </ion-row>
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Classical Channel Interface Interface Device Name: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 1) && (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"   id="var-Node-interface-device-name" [(ngModel)]="nodeobjnetwork.qclidevicename" name="qclidevicename"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 0) || (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"   id="var-Node-interface-device-name">{{nodeobjnetwork.qclidevicename}}</ion-label>
+                </ion-col>
+              </ion-row>
+  
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label style="border:1px solid #eaeaea"   id="Node-interface-device-name">Classical Channel Interface Interface IP address: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 1) && (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"   id="var-Node-interface-device-name" [(ngModel)]="nodeobjnetwork.qclideviceIP" name="qclideviceIP"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 0) || (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"   id="var-Node-interface-device-name">{{nodeobjnetwork.qclideviceIP}}</ion-label>
+                </ion-col>
+              </ion-row>
+
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Classical Channel Interface Interface subnet mask: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 1) && (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"   id="var-Node-interface-device-name" [(ngModel)]="nodeobjnetwork.qclidevicesubnetmask" name="qclidevicesubnetmask"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 0) || (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"   id="var-Node-interface-device-name">{{nodeobjnetwork.qclidevicesubnetmask}}</ion-label>
+                </ion-col>
+              </ion-row>
+
+
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Classical Channel Interface Interface gateway address: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 1) && (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"   id="var-Node-interface-device-name" [(ngModel)]="nodeobjnetwork.qclidevicegatewayaddress" name="qclidevicegatewayaddress"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.staticipsettingenable === 0) || (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"   id="var-Node-interface-device-name">{{nodeobjnetwork.qclidevicegatewayaddress}}</ion-label>
+                </ion-col>
+              </ion-row>
+  
+              <ion-row >
+                
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col>
+                  <ion-button *ngIf="this.roleheader === 'Admin' && (this.staticipsettingenable === 1)" style="margin-bottom:10px;" class="button-width-new2" (click)="editnetworkinfo(0, this.processortoshow,nodeobjnetwork.qclidevicegatewayaddress, nodeobjnetwork.qclidevicesubnetmask, nodeobjnetwork.qclideviceIP,  nodeobjnetwork.qclidevicename)" id="clickipv4addresssave">
+                  Save
+                  </ion-button>
+                </ion-col>
+
+                <ion-col>
+                  <ion-button *ngIf="this.roleheader === 'Admin'" style="margin-bottom:10px;"  (click)="editdynamicnetworkinfo(1, this.processortoshow)" id="clickipv4addresssave">
+                  Set Dynamic Configuration
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+  
+            </ion-grid>
+  
+          </form>
+  
+          <form *ngIf = "this.processortoshow==3">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Node Interface Device Name: </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-label id="var-Node-interface-device-name">{{nodeobj.nodeclidevicename}}</ion-label>
+                </ion-col>
+              </ion-row>
+  
+              <ion-row *ngIf="this.roleheader === 'Admin'">
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;display:grid;align-items:center !important;">
+                  <ion-label>Node Interface IPv4 Address: </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-input style="border:1px solid #eaeaea" [(ngModel)]="nodeobj.nodeintipv4" name="nodeintipv4" id = "clickipv4addressadmin"></ion-input>
+                </ion-col>
+              </ion-row>
+  
+              <ion-row *ngIf="this.roleheader !== 'Admin'">
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;display:grid;align-items:center !important;">
+                  <ion-label id="Node-interface-ipv4-address">Node Interface IPv4 Address: </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-label id="var-Node-interface-ipv4-address">{{nodeobj.nodeintipv4}}</ion-label>
+                </ion-col>
+              </ion-row>
+  
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Node Interface subnet mask: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf=" (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"   id="var-Node-interface-device-name" [(ngModel)]="nodeobj.nodeclidevicesubnetmask" name="nodeclidevicesubnetmask"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf="(this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"   id="var-Node-interface-device-name">{{nodeobj.nodeclidevicesubnetmask}}</ion-label>
+                </ion-col>
+              </ion-row>
+  
+  
+              <ion-row >
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Node-interface-device-name">Node Interface gateway address: </ion-label>
+                </ion-col>
+                <ion-col size="auto" *ngIf=" (this.roleheader === 'Admin')">
+                  <ion-input style="border:1px solid #eaeaea"   id="var-Node-interface-device-name" [(ngModel)]="nodeobj.nodeclidevicegatewayaddress" name="nodeclidevicegatewayaddress"></ion-input>
+                </ion-col>
+                <ion-col size="auto" *ngIf=" (this.roleheader !== 'Admin')">
+                  <ion-label style="border:1px solid #eaeaea"   id="var-Node-interface-device-name">{{nodeobj.nodeclidevicegatewayaddress}}</ion-label>
+                </ion-col>
+              </ion-row>
+
+              <ion-row >
+                <ion-col>
+                  <ion-button *ngIf="this.roleheader === 'Admin'" style="margin-bottom:10px;" class="button-width-new2" (click)="editnodeinfo(nodeobj.nodeid, nodeobj.nodename, nodeobj.nodeinternalipv4, nodeobj.nodeintipv4, nodeobj.nodeclidevicesubnetmask, nodeobj.nodeclidevicegatewayaddress)" id="clickipv4addresssave">
+                  Save
+                  </ion-button>
+                </ion-col>
+              </ion-row>
+  
+            </ion-grid>
+  
+          </form>
+
+          <form *ngIf = "this.processortoshow==4">
+            <ion-grid>
+              <ion-row>
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;">
+                  <ion-label id="Q-element-pair-device-name">Classical Channel Pair Device Name: </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-label id="var-Q-element-pair-device-name">{{qelmarray[0].qelmpairdevicename}}</ion-label>
+                </ion-col>
+              </ion-row>
+
+              <ion-row *ngIf="this.roleheader === 'Admin'">
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;display:grid;align-items:center !important;">
+                  <ion-label>Classical Channel Interface Pair IPv4 Address: </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-input style="border:1px solid #eaeaea" [(ngModel)]="qelmarray[0].qelmpairipv4" name="qelmpairipv4" id="clickqelementpairadmin"></ion-input>
+                </ion-col>
+              </ion-row>
+
+              <ion-row *ngIf="this.roleheader !== 'Admin'">
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;display:grid;align-items:center !important;">
+                  <ion-label id="Q-element-pair-ipv4-address">Classical Channel Interface Pair IPv4 Address: </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-label id="var-Q-element-pair-ipv4-address">{{qelmarray[0].qelmpairipv4}}</ion-label>
+                </ion-col>
+              </ion-row>
+
+              <ion-row *ngIf="this.roleheader === 'Admin'">
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;display:grid;align-items:center !important;">
+                  <ion-label>Classical Channel Interface Remote IPv4 Address: </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-input style="border:1px solid #eaeaea" [(ngModel)]="qelmarray[0].qelmremoteipv4" name="qelmremoteipv4" id="clickqelementremoteadmin"></ion-input>
+                </ion-col>
+              </ion-row>
+
+              <ion-row *ngIf="this.roleheader !== 'Admin'">
+                <ion-col size="3">
+                    
+                </ion-col>
+                <ion-col size="3" style="text-align:right;display:grid;align-items:center !important;">
+                  <ion-label id="Q-element-remote-ipv4-address">Classical Channel Interface Remote IPv4 Address: </ion-label>
+                </ion-col>
+                <ion-col size="auto">
+                  <ion-label id="var-Q-element-remote-ipv4-address">{{qelmarray[0].qelmremoteipv4}}</ion-label>
+                </ion-col>
+              </ion-row>
+
+            </ion-grid>
+          </form>
+
+          <ion-button *ngIf="this.roleheader === 'Admin' && this.processortoshow==4" style="margin-bottom:10px;" class="button-width-new2" (click)="editqelminfo(qelmarray[0].qelmid, qelmarray[0].qelmtype, qelmarray[0].qelminternalipv4, qelmarray[0].qelmpairipv4, qelmarray[0].qelmremoteipv4)" id="clickqelementsave">
+            Save
+          </ion-button>
+          
+        </div>
+  
+  
+  
+          <div style="border-top: 1px solid #eaeaea;padding-bottom:10px;margin-bottom:30px;font-weight:bold;">
+          </div>
+  
+        </div>
+        <!---->
+        
+   
+   
+         
+  
+        
+  
+        <!---->
+
+        <div style="text-align:right;padding-bottom:25px;" *ngIf="number_active_event != 0">
+          <ion-row size="3" style="text-align:right;padding-bottom:25px;">
+              <ion-col  size="3" *ngFor="let saved of event_list; let i = index;let last = last">
+                <ion-card style="display:inline-block;width:100%;">
+                  <a style="display:inline-block;margin-right:50px;color:black;">
+                    <ion-text color="danger" style="font-weight:semiBold; font-size:larger;">
+                    <p>  {{saved.EventAssertTime}} ago</p >
+                    <p> {{saved.EventMessage}}  </p>
+                    </ion-text>
+                  </a>
+                </ion-card>
+              </ion-col>
+          </ion-row>
+          </div>
+</div>
+</div>
+
+
+
+</ion-content>
+
+<ion-footer style="height:40px! important;">
+  <ion-toolbar style="--background: #881630 !important">
+    <ion-title style="text-align:center;padding-bottom:10px;color:black;">© 2021 QuNu Labs Pvt. Ltd.</ion-title>
+  </ion-toolbar>
+</ion-footer>

@@ -1,0 +1,31 @@
+<!--<ion-header [translucent]="true">
+  <ion-toolbar class="new-background-color">
+    <ion-title class="toolbar-title">
+      QunuLabs
+    </ion-title>
+  </ion-toolbar>
+</ion-header>-->
+
+<ion-content [fullscreen]="true" class="background">
+
+    <div style="position:absolute;width:30%;height:700px;top:calc(100%/2 - 350px);left:calc(100%/3);background-color:white;">
+
+      <h2 style="color: transparent; font-size:0.1px;">{{versionnum}}</h2>
+
+      <ion-img style="height:200px;width:200px;margin:auto;" src="/assets/image/logo.png"></ion-img>
+      <ion-item style="width:70%;margin:20px auto 20px auto;">
+        <ion-label position="floating">User ID</ion-label>
+        <ion-input type="text" [(ngModel)]="userid" name="userid" id="userid"></ion-input>
+      </ion-item>
+
+      <ion-item style="width:70%;margin:20px auto 20px auto;"> 
+        <ion-label position="floating">Password</ion-label>
+        <ion-input type="password" [(ngModel)]="password" name="password" id="password"></ion-input>
+      </ion-item>
+      <!--<ion-button class="button-width" routerLink="/home" routerDirection="root" (click)="doauth()">-->
+      <ion-button class="button-width" (click)="doauth()" id="loginbutton">
+        Login
+      </ion-button>
+    </div>
+
+</ion-content>
